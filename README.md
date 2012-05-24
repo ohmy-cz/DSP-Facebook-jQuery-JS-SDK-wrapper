@@ -7,6 +7,7 @@ This is a wrapper that handles the login &amp; return of a user and can fetch th
 - Detects the presence of all required libraries, yields according error if any missing
 - You can define a handler for a logged in state.
 - You can define the permissions you require for your use; default is manage_pages to be able to obtain the user's Facebook pages.
+- Add ?debug to the URL to get the console messages in your browser (F12 key)
  
 Requirements:
 -------------

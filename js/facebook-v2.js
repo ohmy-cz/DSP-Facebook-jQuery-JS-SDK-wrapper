@@ -9,7 +9,6 @@ function DSPFacebook()
 	this._defaultState			= null;
 	this._openFBPageManagement	= false;
 	this.requiredPermissions	= 'manage_pages';
-	this.dialogHandle			= null;
 	this._FBPages				= new Array();
 	this.appId					= null;
 	this.allPermissionsGranted 	= false;
@@ -27,71 +26,59 @@ function DSPFacebook()
 			this.debug = true;
 		}
 		
-		
-		utils.getLabels([
-			'dashboard.facebook.manage', 
-			'dashboard.facebook.managePages.table.page', 
-			'dashboard.facebook.managePages.table.installedWidget', 
-			'dashboard.facebook.managePages.table.appOnFb', 
-			'dashboard.facebook.managePages.currentWidget', 
-			'dashboard.facebook.managePages.install', 
-			'dashboard.facebook.managePages.uninstall',
-			'dashboard.facebook.managePages.replaceWidget',
-			'dashboard.facebook.managePages.noPages'
-		], function() {
-			if(!thisObj._isLocalhost())
-			{
-				if(thisObj._hasRequiredLibs())
-				{
-					if($('#fb-root').length > 0)
-					{
-						try{
-							FB.init({
-							  appId      : $('#fbAppId').val(), // App ID
-							  status     : true, // check login status
-							  cookie     : true, // enable cookies to allow the server to access the session
-							  xfbml      : true  // parse XFBML
-							});
-							
-	//						thisObj._defaultLoginButton.attr('href');
 	
-							thisObj.appId = thisObj._defaultLoginButton.attr('data-appid');
-							
-							thisObj.bindLoginButton(thisObj._defaultLoginButton);
-							
-							FB.getLoginStatus(function(response) {
-								if(response.status == 'connected') {
-									thisObj._isConnected = true;
-									thisObj._permCheck();
-								} else {
-									thisObj._removeLoadingAnimation();
-									
-									if(thisObj.debug)
-									{
-										console.log('DSPFacebook: Facebook: Not yet connected with our app, binding the login button.');
-									}
+		if(!thisObj._isLocalhost())
+		{
+			if(thisObj._hasRequiredLibs())
+			{
+				if($('#fb-root').length > 0)
+				{
+					try{
+						FB.init({
+						  appId      : $('#fbAppId').val(), // App ID
+						  status     : true, // check login status
+						  cookie     : true, // enable cookies to allow the server to access the session
+						  xfbml      : true  // parse XFBML
+						});
+						
+//						thisObj._defaultLoginButton.attr('href');
+
+						thisObj.appId = thisObj._defaultLoginButton.attr('data-appid');
+						
+						thisObj.bindLoginButton(thisObj._defaultLoginButton);
+						
+						FB.getLoginStatus(function(response) {
+							if(response.status == 'connected') {
+								thisObj._isConnected = true;
+								thisObj._permCheck();
+							} else {
+								thisObj._removeLoadingAnimation();
+								
+								if(thisObj.debug)
+								{
+									console.log('DSPFacebook: Facebook: Not yet connected with our app, binding the login button.');
 								}
-							});
-						} catch(e) {
-							if(this.debug)
-							{
-								console.warn('DSPFacebook: Facebook lib error catched: '+e);
 							}
-						}
-					} else {
+						});
+					} catch(e) {
 						if(this.debug)
 						{
-							console.error('DSPFacebook: div id="fb-root" tag is missing!');
+							console.warn('DSPFacebook: Facebook lib error catched: '+e);
 						}
 					}
-				}
-			} else {
-				if(this.debug)
-				{
-					console.error('DSPFacebook: this script can NOT work locally due to its nature!\nPlease test your page outside localhost.');
+				} else {
+					if(this.debug)
+					{
+						console.error('DSPFacebook: div id="fb-root" tag is missing!');
+					}
 				}
 			}
-		});
+		} else {
+			if(this.debug)
+			{
+				console.error('DSPFacebook: this script can NOT work locally due to its nature!\nPlease test your page outside localhost.');
+			}
+		}
 	}
 	
 	this._addLoadingAnimation = function()
@@ -284,48 +271,7 @@ function DSPFacebook()
 			});
 		}
 	}
-	
-	this.openDialog = function(content)
-	{
-		var thisObj = this;
-		this.dialogHandle = $('<div class="FBPageManagementBody"><a href="#" class="FBPageManagementClose">X</a><div class="clean"></div><div class="content"><p><img class="center" src="/common/images/ajax-loader.gif" width="16" height="16" id="DSPFacebookPagesManagementLoading"/> <em>Loading dialog&hellip;</em></p></div></div>');
 		
-		this.dialogHandle.find('.FBPageManagementClose').click(function(){thisObj.closeDialog();});
-		
-		if(typeof(content) != 'undefined')
-		{
-			this.dialogHandle.find('.content').empty().append(content);
-		}
-		
-		$('body')			
-			.prepend($('<div class="dimmedArea" id="dimmedArea">&nbsp;</div>').css('opacity', 0).animate({opacity:.3}, 'slow', function(){
-				$('body')
-					.prepend(thisObj.dialogHandle.fadeIn('slow'));
-				thisObj._alignDialog();
-			}));
-		
-		
-		$(window)
-			.resize(function(){
-				thisObj._alignDialog();
-			});
-	}
-	
-	this._alignDialog = function()
-	{
-		this.dialogHandle
-			.css('left', ($(window).width()-$('.FBPageManagementBody').width())/2)
-			.css('top', ($(window).height()-$('.FBPageManagementBody').height())/2);
-	}
-	
-	this.closeDialog = function()
-	{
-		this.dialogHandle
-			.fadeOut('slow', function(){
-				$('#dimmedArea').fadeOut('slow');
-			});
-	}
-	
 	this.getPages = function(callback)
 	{
 		var thisObj = this;
