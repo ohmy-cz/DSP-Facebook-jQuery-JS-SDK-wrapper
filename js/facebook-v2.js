@@ -86,7 +86,7 @@ function DSPFacebook()
 		this._defaultLoginButton
 			.parent()
 				.hide()
-				.after($('<div class="center"><img class="center" src="/common/images/ajax-loader.gif" width="16" height="16" id="DSPFacebookPagesManagementLoading"/></div>'));
+				.after($('<div class="center"><img class="center" src="/images/ajax-loader.gif" width="16" height="16" id="DSPFacebookPagesManagementLoading"/></div>'));
 	}
 	
 	this._removeLoadingAnimation = function()
